@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/utils";
 import type { ComponentProps, HTMLAttributes } from "react";
-import * as React from "react";
 import { isValidElement, memo } from "react";
 import ReactMarkdown, { type Options } from "react-markdown";
 import rehypeKatex from "rehype-katex";
@@ -320,16 +319,16 @@ const components: Options["components"] = {
       language = node.properties.className.replace("language-", "");
     }
 
+    // Extract code content from children safely
     let code = "";
-    const childrenArray = React.Children.toArray(children);
-    if (childrenArray.length > 0) {
-      const firstChild = childrenArray[0];
-      if (React.isValidElement(firstChild)) {
-        const firstChildProps = firstChild.props as { children?: string };
-        if (typeof firstChildProps.children === "string") {
-          code = firstChildProps.children;
-        }
-      }
+    if (
+      isValidElement(children) &&
+      (children.props as any) &&
+      typeof (children.props as any).children === "string"
+    ) {
+      code = (children.props as any).children;
+    } else if (typeof children === "string") {
+      code = children;
     }
 
     return (
@@ -386,7 +385,19 @@ export const Response = memo(
       </div>
     );
   },
-  (prevProps, nextProps) => prevProps.children === nextProps.children
+  (prevProps, nextProps) => {
+    // Deep comparison for children if they are objects/arrays, otherwise shallow
+    if (
+      typeof prevProps.children === "string" &&
+      typeof nextProps.children === "string"
+    ) {
+      return prevProps.children === nextProps.children;
+    }
+    // For non-string children (e.g., React elements, arrays), a shallow comparison is often sufficient
+    // or a more complex deep comparison might be needed depending on the exact use case.
+    // For now, we'll assume if they are not strings, a re-render is generally desired if props change.
+    return prevProps.children === nextProps.children;
+  }
 );
 
 Response.displayName = "Response";

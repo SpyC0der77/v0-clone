@@ -5,10 +5,16 @@ function pickAssistant(resp: any) {
   const msgs = resp?.messages || [];
   for (let i = msgs.length - 1; i >= 0; i--) {
     if (msgs[i]?.role === "assistant") {
-      return msgs[i]?.content || msgs[i]?.text || "";
+      let content = msgs[i]?.content || msgs[i]?.text || "";
+      // Remove text between <Thinking> and </Thinking> tags
+      content = content.replace(/<Thinking>.*?<\/Thinking>/gs, "");
+      return content;
     }
   }
-  return resp?.latestMessage?.content || "";
+  let latestContent = resp?.latestMessage?.content || "";
+  // Remove text between <Thinking> and </Thinking> tags
+  latestContent = latestContent.replace(/<Thinking>.*?<\/Thinking>/gs, "");
+  return latestContent;
 }
 
 export async function POST(request: NextRequest) {
