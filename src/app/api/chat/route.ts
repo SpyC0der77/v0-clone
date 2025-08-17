@@ -26,13 +26,11 @@ export async function POST(request: NextRequest) {
       chat = await v0.chats.sendMessage({
         chatId,
         message,
-        system,
         responseMode: responseMode || "sync",
       });
     } else {
       chat = await v0.chats.create({
         message,
-        system,
         responseMode: responseMode || "sync",
       });
     }
