@@ -207,9 +207,6 @@ importers:
       '@types/react-syntax-highlighter':
         specifier: ^15.5.13
         version: 15.5.13
-      tailwindcss:
-        specifier: ^4
-        version: 4.1.12
       tw-animate-css:
         specifier: ^1.3.7
         version: 1.3.7
